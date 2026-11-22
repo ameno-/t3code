@@ -36,12 +36,21 @@ export type HomeCase = {
   readonly closed: number;
   readonly total: number;
 };
+export type HomeCheck = {
+  readonly name: string;
+  readonly run: string;
+  /** Null when the step timed out. */
+  readonly exitCode: number | null;
+  readonly passed: boolean;
+};
 export type HomeDelivered = {
   readonly recordId: string;
   readonly title: string;
   readonly pr: { readonly number: number; readonly url: string } | null;
   readonly headSha: string | null;
   readonly checks: string;
+  /** Each validator step at the delivered head, from the WorkItem's `review` facts; null when they could not be read. */
+  readonly checkResults: ReadonlyArray<HomeCheck> | null;
   readonly spendUSD: number | null;
   readonly budgetUSD: number | null;
   readonly at: string | null;
@@ -119,7 +128,7 @@ async function compose(
   const [waiting, running, delivered] = await Promise.all([
     guarded("Waiting on you", [] as HomeAsk[], async () => asksFrom(rows(await read("/v1/asks")))),
     guarded("Running now", [] as HomeCase[], () => casesFrom(read)),
-    guarded("Delivered", [] as HomeDelivered[], async () => deliveredFrom(rows(await read("/v1/workitems")))),
+    guarded("Delivered", [] as HomeDelivered[], async () => deliveredFrom(rows(await read("/v1/workitems")), read)),
   ]);
   return {
     source,
@@ -217,27 +226,63 @@ function checksText(status: Row): string {
   }
 }
 
-function deliveredFrom(listed: Row[]): HomeDelivered[] {
-  return listed
-    .flatMap((entry) => {
-      const status = record(entry.workItemStatus);
-      if (text(status.status) !== "done") return [];
-      const pr = record(status.pr);
-      const spend = record(status.spend);
-      const last = record(status.lastFact);
-      return [
-        {
-          recordId: text(record(entry.dispatch).workItemId),
-          title: text(status.title),
-          pr: typeof pr.number === "number" && typeof pr.url === "string" ? { number: pr.number, url: pr.url } : null,
-          headSha: typeof status.headSha === "string" ? status.headSha : null,
-          checks: checksText(status),
-          spendUSD: typeof spend.spend === "number" ? spend.spend : null,
-          budgetUSD: typeof spend.maxBudget === "number" ? spend.maxBudget : null,
-          at: typeof last.at === "string" ? last.at : null,
-        } satisfies HomeDelivered,
-      ];
-    })
-    .sort((left, right) => (right.at ?? "").localeCompare(left.at ?? ""))
-    .slice(0, MAX_DELIVERED);
+/**
+ * The checks of a WorkItem's latest validated head: each validator step writes one `review` fact whose body is
+ * `{ sha, evidence: { name, run, exitCode, passed, tail } }` (GET /v1/workitems/:id/facts, read scope). Facts come
+ * oldest first, so the last review fact names the newest head. The output `tail` is not shown here.
+ */
+export function checksFromFacts(facts: Row[]): HomeCheck[] {
+  const reviews = facts.filter((fact) => fact.kind === "review").map((fact) => record(fact.body));
+  const latest = reviews.at(-1)?.sha;
+  return reviews
+    .filter((body) => body.sha === latest && typeof record(body.evidence).name === "string")
+    .map((body) => {
+      const evidence = record(body.evidence);
+      return {
+        name: text(evidence.name),
+        run: text(evidence.run),
+        exitCode: typeof evidence.exitCode === "number" ? evidence.exitCode : null,
+        passed: evidence.passed === true,
+      };
+    });
+}
+
+async function deliveredFrom(listed: Row[], read: (path: string) => Promise<unknown>): Promise<HomeDelivered[]> {
+  const done = listed.flatMap((entry) => {
+    const status = record(entry.workItemStatus);
+    if (text(status.status) !== "done") return [];
+    const pr = record(status.pr);
+    const spend = record(status.spend);
+    const last = record(status.lastFact);
+    return [
+      {
+        recordId: text(record(entry.dispatch).workItemId),
+        title: text(status.title),
+        pr: typeof pr.number === "number" && typeof pr.url === "string" ? { number: pr.number, url: pr.url } : null,
+        headSha: typeof status.headSha === "string" ? status.headSha : null,
+        checks: checksText(status),
+        checkResults: null as HomeCheck[] | null,
+        spendUSD: typeof spend.spend === "number" ? spend.spend : null,
+        budgetUSD: typeof spend.maxBudget === "number" ? spend.maxBudget : null,
+        at: typeof last.at === "string" ? last.at : null,
+      } satisfies HomeDelivered,
+    ];
+  });
+  const recent = done.sort((left, right) => (right.at ?? "").localeCompare(left.at ?? "")).slice(0, MAX_DELIVERED);
+  return Promise.all(
+    recent.map(async (item) => {
+      // A facts read that fails leaves the one-line statement; it never hides the WorkItem.
+      const results = await read(`/v1/workitems/${encodeURIComponent(item.recordId)}/facts`).then(
+        (facts) => checksFromFacts(rows(facts)),
+        () => null,
+      );
+      if (results === null || results.length === 0) return item;
+      const passed = results.filter((check) => check.passed).length;
+      return {
+        ...item,
+        checkResults: results,
+        checks: `${passed} of ${results.length} checks passed${item.headSha ? ` at ${item.headSha.slice(0, 7)}` : ""}`,
+      };
+    }),
+  );
 }

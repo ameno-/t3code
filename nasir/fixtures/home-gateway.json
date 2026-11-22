@@ -341,5 +341,160 @@
     "__status": 404,
     "error": "Transcript not yet started for this task",
     "code": "no_transcript"
-  }
+  },
+  "/v1/workitems/wi_11112222/facts": [
+    {
+      "seq": 1,
+      "at": "2026-11-21T18:00:00Z",
+      "kind": "brief",
+      "correlation": {},
+      "body": {}
+    },
+    {
+      "seq": 5,
+      "at": "2026-11-21T19:00:00Z",
+      "kind": "review",
+      "correlation": {},
+      "body": {
+        "sha": "9999999999999999999999999999999999999999",
+        "evidence": {
+          "name": "typecheck",
+          "run": "pnpm typecheck",
+          "exitCode": 2,
+          "passed": false,
+          "tail": "error TS2322"
+        }
+      }
+    },
+    {
+      "seq": 6,
+      "at": "2026-11-21T19:00:00Z",
+      "kind": "review",
+      "correlation": {},
+      "body": {
+        "sha": "9999999999999999999999999999999999999999",
+        "evidence": {
+          "name": "test",
+          "run": "pnpm test",
+          "exitCode": null,
+          "passed": false,
+          "tail": ""
+        }
+      }
+    },
+    {
+      "seq": 9,
+      "at": "2026-11-21T19:00:00Z",
+      "kind": "review",
+      "correlation": {},
+      "body": {
+        "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": {
+          "name": "setup",
+          "run": "pnpm install --frozen-lockfile",
+          "exitCode": 0,
+          "passed": true,
+          "tail": ""
+        }
+      }
+    },
+    {
+      "seq": 10,
+      "at": "2026-11-21T19:00:00Z",
+      "kind": "review",
+      "correlation": {},
+      "body": {
+        "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": {
+          "name": "typecheck",
+          "run": "pnpm typecheck",
+          "exitCode": 0,
+          "passed": true,
+          "tail": ""
+        }
+      }
+    },
+    {
+      "seq": 11,
+      "at": "2026-11-21T19:00:00Z",
+      "kind": "review",
+      "correlation": {},
+      "body": {
+        "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": {
+          "name": "test",
+          "run": "pnpm test",
+          "exitCode": 0,
+          "passed": true,
+          "tail": ""
+        }
+      }
+    },
+    {
+      "seq": 12,
+      "at": "2026-11-21T19:00:00Z",
+      "kind": "review",
+      "correlation": {},
+      "body": {
+        "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": {
+          "name": "lint",
+          "run": "pnpm lint",
+          "exitCode": 0,
+          "passed": true,
+          "tail": ""
+        }
+      }
+    }
+  ],
+  "/v1/workitems/wi_33334444/facts": [
+    {
+      "seq": 3,
+      "at": "2026-11-21T19:00:00Z",
+      "kind": "review",
+      "correlation": {},
+      "body": {
+        "sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "evidence": {
+          "name": "setup",
+          "run": "pnpm install --frozen-lockfile",
+          "exitCode": 0,
+          "passed": true,
+          "tail": ""
+        }
+      }
+    },
+    {
+      "seq": 4,
+      "at": "2026-11-21T19:00:00Z",
+      "kind": "review",
+      "correlation": {},
+      "body": {
+        "sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "evidence": {
+          "name": "typecheck",
+          "run": "pnpm typecheck",
+          "exitCode": 0,
+          "passed": true,
+          "tail": ""
+        }
+      }
+    },
+    {
+      "seq": 5,
+      "at": "2026-11-21T19:00:00Z",
+      "kind": "review",
+      "correlation": {},
+      "body": {
+        "sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "evidence": {
+          "name": "test",
+          "run": "pnpm --filter @nasir/pi-nasir test",
+          "exitCode": 0,
+          "passed": true,
+          "tail": ""
+        }
+      }
+    }
+  ]
 }

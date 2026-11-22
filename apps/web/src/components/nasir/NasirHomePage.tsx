@@ -20,6 +20,7 @@ type Delivered = {
   pr: { number: number; url: string } | null;
   headSha: string | null;
   checks: string;
+  checkResults: { name: string; run: string; exitCode: number | null; passed: boolean }[] | null;
   spendUSD: number | null;
   budgetUSD: number | null;
   at: string | null;
@@ -152,6 +153,21 @@ function DeliveredRow({ item }: { item: Delivered }) {
         · {item.checks} · spent {usd(item.spendUSD)}
         {item.budgetUSD !== null ? ` of ${usd(item.budgetUSD)}` : ""}
       </div>
+      {item.checkResults ? (
+        <div style={{ margin: "4px 0", display: "grid", gap: 2 }}>
+          {item.checkResults.map((check) => (
+            <div key={check.name} style={{ display: "flex", gap: 8, fontSize: 12 }}>
+              <span style={{ color: check.passed ? "var(--success)" : "var(--destructive)", fontWeight: 600, minWidth: 40 }}>
+                {check.passed ? "pass" : "fail"}
+              </span>
+              <span style={{ fontWeight: 600 }}>{check.name}</span>
+              <span style={mono}>
+                {check.run} · {check.exitCode === null ? "timed out" : `exit ${check.exitCode}`}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : null}
       <div style={mono}>
         {item.headSha ? `head ${item.headSha}` : ""}
         {item.at ? ` · ${new Date(item.at).toLocaleString()}` : ""}
