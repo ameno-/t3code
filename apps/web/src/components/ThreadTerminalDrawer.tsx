@@ -1857,6 +1857,12 @@ export default function ThreadTerminalDrawer({
     >
       {resizeHandle}
 
+      {/* Nasir Floor fork: this shell is on the T3 server machine, never on Nasir's computer. */}
+      {/* oxlint-disable-next-line t3code/no-untranslated-copy -- fork-only notice */}
+      <div className="shrink-0 border-b border-border/60 px-2 py-0.5 text-3xs text-muted-foreground">
+        {"A shell on the T3 server machine, not Nasir's computer."}
+      </div>
+
       {!hasTerminalSidebar && (
         <div className="pointer-events-none absolute right-2 top-2 z-20">
           <div className="pointer-events-auto inline-flex items-center overflow-hidden rounded-md border border-border/80 bg-background shadow-xs">

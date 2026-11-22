@@ -7,7 +7,7 @@
 //
 // There is no demo data. Without a gateway the snapshot says so. NASIR_HOME_FIXTURE=<file> reads recorded gateway
 // responses from a file through the same code and labels the snapshot "fixture", never "live".
-import { readFileSync } from "node:fs";
+import { gatewayReader } from "./nasirGateway.ts";
 
 export type HomeAsk = {
   readonly recordId: string;
@@ -72,40 +72,10 @@ export async function readHome(): Promise<HomeSnapshot> {
 }
 
 async function buildSnapshot(): Promise<HomeSnapshot> {
-  const fixture = process.env.NASIR_HOME_FIXTURE?.trim();
-  const url = process.env.NASIR_GATEWAY_URL?.trim();
-  const tokenFile = process.env.NASIR_GATEWAY_TOKEN_FILE?.trim();
-  if (fixture) {
-    const recorded = JSON.parse(readFileSync(fixture, "utf8")) as Record<string, unknown>;
-    return compose(
-      async (path) => {
-        const body = recorded[path];
-        if (body === undefined) throw new Error(`no recorded response for ${path}`);
-        return body;
-      },
-      "fixture",
-      "Not live: these are recorded gateway responses from a fixture file, not Nasir's current state.",
-    );
-  }
-  if (!url || !tokenFile) {
-    return empty("unconfigured", "Not connected: this server has no NASIR_GATEWAY_URL and NASIR_GATEWAY_TOKEN_FILE, so it cannot read Nasir.");
-  }
-  const base = url.replace(/\/+$/, "");
-  const token = readFileSync(tokenFile, "utf8").trim();
-  const read = async (path: string): Promise<unknown> => {
-    const response = await fetch(`${base}${path}`, {
-      headers: { authorization: `Bearer ${token}` },
-      signal: AbortSignal.timeout(15_000),
-    }).catch(() => {
-      throw new Error(`the gateway at ${new URL(base).host} is unreachable`);
-    });
-    if (!response.ok) throw new Error(`the gateway answered ${response.status} for ${path.split("?")[0]}`);
-    return response.json().catch(() => {
-      throw new Error(`the gateway answered ${path.split("?")[0]} with something that is not JSON; check NASIR_GATEWAY_URL`);
-    });
-  };
-  return compose(read, "gateway", null).catch((error: unknown) =>
-    empty("gateway", `The gateway could not be read: ${error instanceof Error ? error.message : String(error)}`),
+  const reader = gatewayReader();
+  if (reader.source === "unconfigured") return empty("unconfigured", reader.notice);
+  return compose(reader.read, reader.source, reader.notice).catch((error: unknown) =>
+    empty(reader.source, `The gateway could not be read: ${error instanceof Error ? error.message : String(error)}`),
   );
 }
 

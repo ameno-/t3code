@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, ArrowRightIcon, ChartNoAxesColumnIcon, FactoryIcon, HouseIcon, SettingsIcon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon, ChartNoAxesColumnIcon, FactoryIcon, HouseIcon, MonitorIcon, SettingsIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { T, useGT } from "gt-react";
 import { memo } from "react";
@@ -260,6 +260,11 @@ const SidebarUtilityMenu = memo(function SidebarUtilityMenu() {
     void navigate({ to: "/nasir" });
   };
 
+  const handleComputerClick = () => {
+    closeMobileSidebar();
+    void navigate({ to: "/computer" });
+  };
+
   const handleFloorClick = () => {
     closeMobileSidebar();
     void navigate({ to: "/floor" });
@@ -310,6 +315,7 @@ const SidebarUtilityMenu = memo(function SidebarUtilityMenu() {
             />
           ) : null}
           <SidebarUtilityItem icon={<HouseIcon />} label="Nasir" onClick={handleNasirClick} />
+          <SidebarUtilityItem icon={<MonitorIcon />} label="Nasir's computer" onClick={handleComputerClick} />
           <SidebarUtilityItem
             icon={<FactoryIcon />}
             label="Floor"

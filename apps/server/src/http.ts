@@ -1,5 +1,6 @@
 import { readFloor } from "./nasirFloor.ts";
 import { readHome } from "./nasirHome.ts";
+import { listFiles, readFile, readTranscript, type ComputerResult } from "./nasirComputer.ts";
 import * as Mime from "effect/http/Mime";
 import {
   AuthOrchestrationOperateScope,
@@ -375,6 +376,40 @@ export const layerNasirHomeRoute = HttpRouter.add(
       headers: { "cache-control": "private, no-store" },
     });
   }),
+);
+
+// Nasir Computer (fork-only): read-only files and arm transcripts of Nasir's computer. Never a shell.
+const nasirComputerResponse = (result: ComputerResult<unknown>) =>
+  HttpServerResponse.jsonUnsafe(result, {
+    status: result.ok ? 200 : result.status,
+    headers: { "cache-control": "private, no-store" },
+  });
+
+const nasirComputerRoute = (
+  path: string,
+  run: (query: URLSearchParams) => Promise<ComputerResult<unknown>>,
+) =>
+  HttpRouter.add(
+    "GET",
+    path,
+    Effect.gen(function* () {
+      yield* authenticateRawRouteWithScope(AuthOrchestrationReadScope);
+      const request = yield* HttpServerRequest.HttpServerRequest;
+      const url = requestUrl(request);
+      if (Option.isNone(url)) return HttpServerResponse.text("Bad Request", { status: 400 });
+      return nasirComputerResponse(yield* Effect.promise(() => run(url.value.searchParams)));
+    }),
+  );
+
+export const layerNasirComputerFilesRoute = nasirComputerRoute("/api/nasir/computer/files", (query) =>
+  listFiles(query.get("path") ?? ""),
+);
+export const layerNasirComputerFileRoute = nasirComputerRoute("/api/nasir/computer/file", (query) =>
+  readFile(query.get("path") ?? ""),
+);
+export const layerNasirComputerTranscriptRoute = nasirComputerRoute(
+  "/api/nasir/computer/transcript",
+  (query) => readTranscript(query.get("case") ?? "", query.get("task") ?? ""),
 );
 
 // Nasir Floor (fork-only): read-only snapshot of Nasir's Cases, Tasks and asks for the Floor page.

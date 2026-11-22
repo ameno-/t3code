@@ -25,6 +25,7 @@ import { Route as ChatNewRouteImport } from './routes/_chat.new'
 import { Route as ChatNasirRouteImport } from './routes/_chat.nasir'
 import { Route as ChatIssuesRouteImport } from './routes/_chat.issues'
 import { Route as ChatFloorRouteImport } from './routes/_chat.floor'
+import { Route as ChatComputerRouteImport } from './routes/_chat.computer'
 import { Route as ThreadsEnvironmentIdThreadIdRouteImport } from './routes/threads.$environmentId.$threadId'
 import { Route as ChatSettingsWorktreesRouteImport } from './routes/_chat.settings.worktrees'
 import { Route as ChatSettingsVoiceRouteImport } from './routes/_chat.settings.voice'
@@ -133,6 +134,11 @@ const ChatIssuesRoute = ChatIssuesRouteImport.update({
 const ChatFloorRoute = ChatFloorRouteImport.update({
   id: '/floor',
   path: '/floor',
+  getParentRoute: () => ChatRoute,
+} as any)
+const ChatComputerRoute = ChatComputerRouteImport.update({
+  id: '/computer',
+  path: '/computer',
   getParentRoute: () => ChatRoute,
 } as any)
 const ThreadsEnvironmentIdThreadIdRoute =
@@ -300,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/guest': typeof GuestRoute
   '/pair': typeof PairRoute
   '/welcome': typeof WelcomeRoute
+  '/computer': typeof ChatComputerRoute
   '/floor': typeof ChatFloorRoute
   '/issues': typeof ChatIssuesRoute
   '/nasir': typeof ChatNasirRoute
@@ -346,6 +353,7 @@ export interface FileRoutesByTo {
   '/guest': typeof GuestRoute
   '/pair': typeof PairRoute
   '/welcome': typeof WelcomeRoute
+  '/computer': typeof ChatComputerRoute
   '/floor': typeof ChatFloorRoute
   '/issues': typeof ChatIssuesRoute
   '/nasir': typeof ChatNasirRoute
@@ -395,6 +403,7 @@ export interface FileRoutesById {
   '/guest': typeof GuestRoute
   '/pair': typeof PairRoute
   '/welcome': typeof WelcomeRoute
+  '/_chat/computer': typeof ChatComputerRoute
   '/_chat/floor': typeof ChatFloorRoute
   '/_chat/issues': typeof ChatIssuesRoute
   '/_chat/nasir': typeof ChatNasirRoute
@@ -445,6 +454,7 @@ export interface FileRouteTypes {
     | '/guest'
     | '/pair'
     | '/welcome'
+    | '/computer'
     | '/floor'
     | '/issues'
     | '/nasir'
@@ -491,6 +501,7 @@ export interface FileRouteTypes {
     | '/guest'
     | '/pair'
     | '/welcome'
+    | '/computer'
     | '/floor'
     | '/issues'
     | '/nasir'
@@ -539,6 +550,7 @@ export interface FileRouteTypes {
     | '/guest'
     | '/pair'
     | '/welcome'
+    | '/_chat/computer'
     | '/_chat/floor'
     | '/_chat/issues'
     | '/_chat/nasir'
@@ -704,6 +716,13 @@ declare module '@tanstack/react-router' {
       path: '/floor'
       fullPath: '/floor'
       preLoaderRoute: typeof ChatFloorRouteImport
+      parentRoute: typeof ChatRoute
+    }
+    '/_chat/computer': {
+      id: '/_chat/computer'
+      path: '/computer'
+      fullPath: '/computer'
+      preLoaderRoute: typeof ChatComputerRouteImport
       parentRoute: typeof ChatRoute
     }
     '/threads/$environmentId/$threadId': {
@@ -984,6 +1003,7 @@ const ChatSettingsRouteWithChildren = ChatSettingsRoute._addFileChildren(
 )
 
 interface ChatRouteChildren {
+  ChatComputerRoute: typeof ChatComputerRoute
   ChatFloorRoute: typeof ChatFloorRoute
   ChatIssuesRoute: typeof ChatIssuesRoute
   ChatNasirRoute: typeof ChatNasirRoute
@@ -997,6 +1017,7 @@ interface ChatRouteChildren {
 }
 
 const ChatRouteChildren: ChatRouteChildren = {
+  ChatComputerRoute: ChatComputerRoute,
   ChatFloorRoute: ChatFloorRoute,
   ChatIssuesRoute: ChatIssuesRoute,
   ChatNasirRoute: ChatNasirRoute,

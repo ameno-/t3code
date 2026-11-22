@@ -564,6 +564,11 @@ export default function FileBrowserPanel({
         focusSearch();
       }}
     >
+      {/* Nasir Floor fork: these files are on the T3 server machine; Nasir's own are under "Nasir's computer". */}
+      {/* oxlint-disable-next-line t3code/no-untranslated-copy -- fork-only notice */}
+      <div className="shrink-0 border-b border-border/60 px-2 py-0.5 text-3xs text-muted-foreground">
+        {"Files on the T3 server machine. Nasir's own files: Nasir's computer, in the sidebar."}
+      </div>
       <div
         className="flex h-10 min-h-10 shrink-0 items-center gap-1 border-b border-border/60 bg-background px-2 in-data-[preview-panel-mode=inline]:mb-1 in-data-[preview-panel-mode=inline]:h-9 in-data-[preview-panel-mode=inline]:min-h-9 in-data-[preview-panel-mode=inline]:border-b-transparent"
         data-surface-subheader

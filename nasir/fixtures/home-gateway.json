@@ -230,5 +230,116 @@
       },
       "workItemStatus": null
     }
-  ]
+  ],
+  "/v1/computer/files?path=%2Fhome%2Fagentos%2Fwork": {
+    "path": "/home/agentos/work",
+    "roots": [
+      "/home/agentos/work",
+      "/home/agentos/cases"
+    ],
+    "entries": [
+      {
+        "name": "notes",
+        "path": "/home/agentos/work/notes",
+        "kind": "directory"
+      },
+      {
+        "name": "research",
+        "path": "/home/agentos/work/research",
+        "kind": "directory"
+      },
+      {
+        "name": "README.md",
+        "path": "/home/agentos/work/README.md",
+        "kind": "file"
+      }
+    ],
+    "truncated": false
+  },
+  "/v1/computer/files?path=%2Fhome%2Fagentos%2Fcases": {
+    "path": "/home/agentos/cases",
+    "roots": [
+      "/home/agentos/work",
+      "/home/agentos/cases"
+    ],
+    "entries": [
+      {
+        "name": "case_k3m9q7x2",
+        "path": "/home/agentos/cases/case_k3m9q7x2",
+        "kind": "directory"
+      }
+    ],
+    "truncated": false
+  },
+  "/v1/computer/files?path=%2Fhome%2Fagentos%2Fwork%2Fnotes": {
+    "path": "/home/agentos/work/notes",
+    "roots": [
+      "/home/agentos/work",
+      "/home/agentos/cases"
+    ],
+    "entries": [
+      {
+        "name": "hello.md",
+        "path": "/home/agentos/work/notes/hello.md",
+        "kind": "file"
+      },
+      {
+        "name": "imessage-options.md",
+        "path": "/home/agentos/work/notes/imessage-options.md",
+        "kind": "file"
+      }
+    ],
+    "truncated": false
+  },
+  "/v1/computer/files?path=%2Fhome%2Fagentos%2Fwork%2Fresearch": {
+    "path": "/home/agentos/work/research",
+    "roots": [
+      "/home/agentos/work",
+      "/home/agentos/cases"
+    ],
+    "entries": [],
+    "truncated": false
+  },
+  "/v1/computer/files?path=%2Fhome%2Fagentos%2Fcases%2Fcase_k3m9q7x2": {
+    "__status": 403,
+    "error": "path is a symlink",
+    "code": "symlink"
+  },
+  "/v1/computer/file?path=%2Fhome%2Fagentos%2Fwork%2FREADME.md": {
+    "path": "/home/agentos/work/README.md",
+    "size": 58,
+    "text": "# Nasir's work dir\n\nNotes and research packets live here.\n"
+  },
+  "/v1/computer/file?path=%2Fhome%2Fagentos%2Fwork%2Fnotes%2Fhello.md": {
+    "path": "/home/agentos/work/notes/hello.md",
+    "size": 31,
+    "text": "Hello from Nasir's computer.\n"
+  },
+  "/v1/computer/file?path=%2Fhome%2Fagentos%2Fwork%2Fnotes%2Fimessage-options.md": {
+    "__status": 403,
+    "error": "that file looks like a secret",
+    "code": "secret"
+  },
+  "/v1/cases/case_k3m9q7x2/tasks/task_a1a1a1a1/transcript?limit=50": [
+    {
+      "id": 1,
+      "role": "user",
+      "text": "Survey iMessage bot approaches. Cite every claim."
+    },
+    {
+      "id": 2,
+      "role": "assistant",
+      "text": "Reading BlueBubbles docs and three community write-ups. Two say SIP must be off; one says it works with it on."
+    },
+    {
+      "id": 3,
+      "role": "assistant",
+      "text": "Packet draft has 9 cited claims; checking the last two."
+    }
+  ],
+  "/v1/cases/case_k3m9q7x2/tasks/task_b2b2b2b2/transcript?limit=50": {
+    "__status": 404,
+    "error": "Transcript not yet started for this task",
+    "code": "no_transcript"
+  }
 }
