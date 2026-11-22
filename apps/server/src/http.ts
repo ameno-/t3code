@@ -1,3 +1,4 @@
+import { readFloor } from "./nasirFloor.ts";
 import * as Mime from "effect/http/Mime";
 import {
   AuthOrchestrationOperateScope,
@@ -361,6 +362,19 @@ class DecodeOtlpTraceRecordsError extends Schema.TaggedError<DecodeOtlpTraceReco
   "DecodeOtlpTraceRecordsError",
   { cause: Schema.Defect() },
 ) {}
+
+// Nasir Floor (fork-only): read-only snapshot of Nasir's Cases, Tasks and asks for the Floor page.
+export const layerNasirFloorRoute = HttpRouter.add(
+  "GET",
+  "/api/nasir/floor",
+  Effect.gen(function* () {
+    yield* authenticateRawRouteWithScope(AuthOrchestrationReadScope);
+    const snapshot = yield* Effect.promise(() => readFloor());
+    return HttpServerResponse.jsonUnsafe(snapshot, {
+      headers: { "cache-control": "private, no-store" },
+    });
+  }),
+);
 
 // Tracing once-per-second renderer exports would create more spans than it forwards.
 export const layerOtlpTracesProxyRoute = HttpRouter.add(
