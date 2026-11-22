@@ -1,0 +1,1 @@
+`home-gateway.json`: gateway responses shaped from Nasir's code (`apps/gateway/src/queries.ts`, `packages/brokers/src/brokers/gateway-reads.ts`, the WorkItem actor's `status()`), keyed by request path. They are **not captured from a live gateway**. Run Home against them with `NASIR_HOME_FIXTURE=nasir/fixtures/home-gateway.json`; the page labels it "Not live: fixture".

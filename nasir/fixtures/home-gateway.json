@@ -1,0 +1,234 @@
+{
+  "/v1/asks": [
+    {
+      "workItemId": "wi_0a1b2c3d",
+      "title": "Add /now to the ACP bridge",
+      "status": "in_review",
+      "desk": "approve delivery",
+      "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "reason": "validation passed at this head; ready to deliver"
+    },
+    {
+      "workItemId": "wi_4e5f6a7b",
+      "title": "Document the approval page",
+      "status": "draft",
+      "desk": "approve start",
+      "sha": null,
+      "reason": "scope: docs/**"
+    },
+    {
+      "workItemId": "wi_8c9d0e1f",
+      "title": "Pick a charting lib",
+      "status": "waiting_for_input",
+      "desk": "owner",
+      "sha": null,
+      "reason": "Which one: visx or recharts?"
+    }
+  ],
+  "/v1/cases": [
+    {
+      "id": "case_k3m9q7x2",
+      "title": "Investigate an iMessage bot",
+      "status": "open",
+      "openTasks": 3,
+      "createdAt": 1795300000000
+    },
+    {
+      "id": "case_p5r8t2v6",
+      "title": "Weekly dependency sweep",
+      "status": "blocked",
+      "openTasks": 2,
+      "createdAt": 1795200000000
+    },
+    {
+      "id": "case_z1y2x3w4",
+      "title": "Old spike",
+      "status": "closed",
+      "openTasks": 0,
+      "createdAt": 1794000000000
+    }
+  ],
+  "/v1/cases/case_k3m9q7x2": {
+    "spec": "Investigate an iMessage bot. Scope options.",
+    "tasks": [
+      {
+        "id": "task_a1a1a1a1",
+        "kind": "research",
+        "arm": "baashe",
+        "title": "Survey iMessage bot approaches",
+        "brief": "b",
+        "deps": [],
+        "status": "working"
+      },
+      {
+        "id": "task_b2b2b2b2",
+        "kind": "prototype",
+        "arm": "faris",
+        "title": "Prototype a relay with BlueBubbles",
+        "brief": "b",
+        "deps": [
+          "task_a1a1a1a1"
+        ],
+        "status": "open"
+      },
+      {
+        "id": "task_c3c3c3c3",
+        "kind": "critique",
+        "arm": "qasim",
+        "title": "Check the research packet",
+        "brief": "b",
+        "deps": [
+          "task_a1a1a1a1"
+        ],
+        "status": "open"
+      },
+      {
+        "id": "task_d4d4d4d4",
+        "kind": "research",
+        "arm": "nasir",
+        "title": "Scope the question",
+        "brief": "b",
+        "deps": [],
+        "status": "closed"
+      }
+    ],
+    "facts": [
+      {
+        "seq": 3,
+        "messageId": "m1",
+        "kind": "NoteAdded",
+        "payload": {
+          "taskId": "task_a1a1a1a1",
+          "from": "baashe",
+          "text": "Read 14 sources; 3 conflict on whether SIP must be off."
+        }
+      },
+      {
+        "seq": 5,
+        "messageId": "m2",
+        "kind": "NoteAdded",
+        "payload": {
+          "taskId": "task_a1a1a1a1",
+          "from": "baashe",
+          "text": "Packet draft has 9 cited claims; checking the last two."
+        }
+      }
+    ]
+  },
+  "/v1/cases/case_p5r8t2v6": {
+    "spec": "Weekly dependency sweep. Pins only.",
+    "tasks": [
+      {
+        "id": "task_e5e5e5e5",
+        "kind": "code",
+        "arm": "faris",
+        "title": "Bump vitest pin",
+        "brief": "b",
+        "deps": [],
+        "status": "blocked"
+      },
+      {
+        "id": "task_f6f6f6f6",
+        "kind": "critique",
+        "arm": "qasim",
+        "title": "Review the bump",
+        "brief": "b",
+        "deps": [
+          "task_e5e5e5e5"
+        ],
+        "status": "open"
+      }
+    ],
+    "facts": [
+      {
+        "seq": 2,
+        "messageId": "m3",
+        "kind": "NoteAdded",
+        "payload": {
+          "taskId": "task_e5e5e5e5",
+          "from": "faris",
+          "text": "Typecheck fails in packages/keys after the bump; needs a call on pinning."
+        }
+      }
+    ]
+  },
+  "/v1/workitems": [
+    {
+      "dispatch": {
+        "workItemId": "wi_11112222"
+      },
+      "workItemStatus": {
+        "id": "wi_11112222",
+        "title": "Fix ledger span replay",
+        "model": "group/nasir-main",
+        "status": "done",
+        "reworkRounds": 1,
+        "headSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pr": {
+          "number": 514,
+          "url": "https://github.com/ameno-/nasir/pull/514"
+        },
+        "spend": {
+          "spend": 0.184,
+          "maxBudget": 2
+        },
+        "lastFact": {
+          "kind": "transition",
+          "at": "2026-11-21T19:02:00Z",
+          "ageSeconds": 3600
+        }
+      }
+    },
+    {
+      "dispatch": {
+        "workItemId": "wi_33334444"
+      },
+      "workItemStatus": {
+        "id": "wi_33334444",
+        "title": "Add /now to the ACP bridge",
+        "model": "group/nasir-main",
+        "status": "done",
+        "reworkRounds": 0,
+        "headSha": "cccccccccccccccccccccccccccccccccccccccc",
+        "pr": {
+          "number": 508,
+          "url": "https://github.com/ameno-/nasir/pull/508"
+        },
+        "spend": {
+          "spend": 0.071,
+          "maxBudget": 2
+        },
+        "lastFact": {
+          "kind": "transition",
+          "at": "2026-11-21T18:41:00Z",
+          "ageSeconds": 7200
+        }
+      }
+    },
+    {
+      "dispatch": {
+        "workItemId": "wi_55556666"
+      },
+      "workItemStatus": {
+        "id": "wi_55556666",
+        "title": "Failed experiment",
+        "status": "failed",
+        "reworkRounds": 2,
+        "headSha": null,
+        "pr": null,
+        "spend": null,
+        "lastFact": {
+          "kind": "andon",
+          "at": "2026-11-20T10:00:00Z",
+          "ageSeconds": 9999
+        }
+      }
+    },
+    {
+      "dispatch": {
+        "workItemId": "wi_77778888"
+      },
+      "workItemStatus": null
+    }
+  ]
+}
