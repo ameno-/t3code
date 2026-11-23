@@ -7,6 +7,7 @@ import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
 
 import { resolveAttachmentPath } from "../attachmentStore.ts";
+import { snapshotMcpApp } from "../mcpApps/McpAppSnapshot.ts";
 import * as ServerSecretStore from "../auth/ServerSecretStore.ts";
 import * as BackgroundPolicy from "../background/BackgroundPolicy.ts";
 import * as ServerConfig from "../config.ts";
@@ -73,6 +74,13 @@ export const layer = Layer.effect(
         },
         Effect.provideService(FileSystem.FileSystem, fileSystem),
       ),
+      // A failed capture shows the tool as a plain row, as the Codex and Claude adapters do.
+      snapshotMcpApp: Effect.fn("ProviderHost.snapshotMcpApp")(function* (input) {
+        return yield* snapshotMcpApp({ attachmentsDir: config.attachmentsDir, ...input }).pipe(
+          Effect.provideService(FileSystem.FileSystem, fileSystem),
+          Effect.catchCause(() => Effect.undefined),
+        );
+      }),
       credentials: Effect.fn("ProviderHost.credentials")(function (namespace, bindingId) {
         return ProviderCredentialStore.make(namespace, bindingId).pipe(
           Effect.map((store) => ({

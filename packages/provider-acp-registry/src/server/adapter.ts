@@ -326,6 +326,8 @@ export const makeAcpRegistryAdapterV2 = Effect.fn("makeAcpRegistryAdapterV2")(fu
           alwaysSetModel: true,
         }),
     mcpOverHttp: useHttpMcpServers,
+    // Nasir's inline elements: off unless the instance environment says `1`.
+    ...(options.environment.T3_NASIR_ELEMENTS === "1" ? { nasirElements: true } : {}),
     makeRuntime: options.makeRuntime ?? makeAcpRegistryRuntime(runtimeOptions, catalog),
     ...(runtimeCoordinator === undefined
       ? {}

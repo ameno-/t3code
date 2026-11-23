@@ -1,5 +1,9 @@
 // @effect-diagnostics globalTimers:off - The bridge runs in the client, outside an Effect runtime.
-import { MCP_APP_PROTOCOL_VERSION, type McpAppReference } from "@t3tools/shared/mcpApp";
+import {
+  MCP_APP_PROTOCOL_VERSION,
+  NASIR_ELEMENT_SERVER,
+  type McpAppReference,
+} from "@t3tools/shared/mcpApp";
 import * as Base64 from "effect/encoding/Base64";
 import * as Predicate from "effect/Predicate";
 import * as Result from "effect/Result";
@@ -9,6 +13,14 @@ const MAX_MESSAGE_BYTES = 256 * 1024;
 const MAX_PENDING_REQUESTS = 16;
 const TEARDOWN_TIMEOUT_MS = 2000;
 const encoder = new TextEncoder();
+// A Nasir element reports a choice as one tool call. These four would put its words in the chat, change what the
+// agent is told, or reach outside the frame.
+const NASIR_ELEMENT_REFUSED_METHODS: ReadonlySet<string> = new Set([
+  "ui/message",
+  "ui/update-model-context",
+  "ui/open-link",
+  "ui/download-file",
+]);
 
 type JsonRpcId = string | number;
 
@@ -226,6 +238,10 @@ export function makeMcpAppHost(options: McpAppHostOptions): McpAppHost {
   };
 
   const handleRequest = (id: JsonRpcId, method: string, params: Record<PropertyKey, unknown>) => {
+    if (options.app.server === NASIR_ELEMENT_SERVER && NASIR_ELEMENT_REFUSED_METHODS.has(method)) {
+      fail(id, -32601, "A Nasir element can only send its choice.");
+      return;
+    }
     switch (method) {
       case "ui/initialize": {
         const requested = params.protocolVersion;

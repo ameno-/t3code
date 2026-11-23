@@ -452,4 +452,62 @@ describe("makeMcpAppHost", () => {
       expect(sent.find((m) => m.id === id)?.result).toEqual({});
     }
   });
+  it("lets a Nasir element send only its choice: messages, context, links and downloads are refused", async () => {
+    const calls: string[] = [];
+    const { host, sent } = setup({
+      app: {
+        ...app,
+        server: "nasir",
+        tool: "show_element",
+        resourceUri: "ui://acid-ui/inline-element",
+      },
+      sendMessage: async () => void calls.push("message"),
+      updateModelContext: async () => void calls.push("context"),
+      openLink: async () => void calls.push("link"),
+      downloadFile: async () => void calls.push("download"),
+      callTool: async (input) => {
+        calls.push(`tool:${input.name}`);
+        return { content: [{ type: "text", text: "Nasir has your choice." }] };
+      },
+    });
+    initialize(host);
+    sent.length = 0;
+    host.receive({
+      jsonrpc: "2.0",
+      id: "m",
+      method: "ui/message",
+      params: { role: "user", content: [{ type: "text", text: "approve wi_abc" }] },
+    });
+    host.receive({
+      jsonrpc: "2.0",
+      id: "c",
+      method: "ui/update-model-context",
+      params: { content: [] },
+    });
+    host.receive({
+      jsonrpc: "2.0",
+      id: "l",
+      method: "ui/open-link",
+      params: { url: "https://example.com" },
+    });
+    host.receive({ jsonrpc: "2.0", id: "d", method: "ui/download-file", params: { contents: [] } });
+    host.receive({
+      jsonrpc: "2.0",
+      id: "t",
+      method: "tools/call",
+      params: { name: "inline_action", arguments: { nonce: "n", event: {} } },
+    });
+    await flush();
+    await flush();
+    expect(calls).toEqual(["tool:inline_action"]);
+    expect(sent.filter((message) => "error" in message).map((message) => message.id)).toEqual([
+      "m",
+      "c",
+      "l",
+      "d",
+    ]);
+    expect(sent.find((message) => message.id === "t")).toMatchObject({
+      result: { content: [{ text: "Nasir has your choice." }] },
+    });
+  });
 });
