@@ -36,6 +36,23 @@ import {
 } from "@t3tools/contracts";
 import { AgentScope, AgentScopeThreadId } from "@t3tools/shared/AgentScope";
 import { HTML_RENDER_TOOL_NAME } from "@t3tools/shared/htmlRender";
+import {
+  MCP_APP_OUTPUT_KEY,
+  NASIR_ELEMENT_SERVER,
+  type McpAppReference,
+} from "@t3tools/shared/mcpApp";
+import {
+  NASIR_ELEMENT_ACTION_METHOD,
+  NASIR_ELEMENT_ACTION_TOOL,
+  NASIR_ELEMENT_TOOL,
+  NASIR_ELEMENTS_CAPABILITY,
+  nasirActionRefused,
+  nasirActionTool,
+  readNasirActionArguments,
+  readNasirActionResult,
+  readNasirElement,
+  type NasirElement,
+} from "./nasirElements.ts";
 import { modelSelectionsEqual } from "@t3tools/shared/model";
 import { type SelfInvocation, selfInvocationArgs } from "@t3tools/shared/nodeRuntime";
 import { resolveT3McpToolId } from "@t3tools/shared/t3McpToolPresentation";
@@ -409,6 +426,8 @@ export interface AcpAdapterV2Flavor {
     EffectAcpSchema.InitializeRequest["clientCapabilities"]
   >["_meta"];
   readonly mcpOverHttp?: boolean;
+  /** Nasir's inline elements (opt-in per instance): see nasirElements.ts. */
+  readonly nasirElements?: boolean;
   /** The agent has no tool search of its own, so T3 lists optional tools on demand. */
   readonly deferMcpTools?: boolean;
   readonly normalizeSessionUpdate?: (
@@ -1988,6 +2007,28 @@ export const makeAcpAdapterV2 = Effect.fn("makeAcpAdapterV2")(function* (
           );
   const driver = flavor.driver;
   const continuationRequests = options.continuationRequests;
+  // Nasir's inline elements: each completed `show_element` call is snapshotted once, however often its row updates.
+  const nasirApps = new Map<string, McpAppReference>();
+  const snapshotNasirElement = Effect.fn("AcpAdapterV2.snapshotNasirElement")(function* (
+    threadId: ThreadId,
+    toolCallId: string,
+    element: NasirElement,
+  ) {
+    const key = `${threadId}:${toolCallId}`;
+    const known = nasirApps.get(key);
+    if (known !== undefined) return known;
+    const reference = yield* (
+      host.snapshotMcpApp?.({
+        threadId,
+        server: NASIR_ELEMENT_SERVER,
+        tool: NASIR_ELEMENT_TOOL,
+        resourceUri: element.resourceUri,
+        contents: [element.resource],
+      }) ?? Effect.undefined
+    );
+    if (reference !== undefined) nasirApps.set(key, reference);
+    return reference;
+  });
 
   const readCapabilities = Effect.gen(function* () {
     if (flavor.supportsNativeGoals === undefined) return flavor.capabilities;
@@ -2781,7 +2822,14 @@ export const makeAcpAdapterV2 = Effect.fn("makeAcpAdapterV2")(function* (
               },
               terminal: clientTerminals !== undefined,
               elicitation: { form: {}, ...(flavor.onUrlElicitation ? { url: {} } : {}) },
-              ...(flavor.clientCapabilitiesMeta ? { _meta: flavor.clientCapabilitiesMeta } : {}),
+              ...(flavor.clientCapabilitiesMeta || flavor.nasirElements
+                ? {
+                    _meta: {
+                      ...flavor.clientCapabilitiesMeta,
+                      ...(flavor.nasirElements ? { [NASIR_ELEMENTS_CAPABILITY]: true } : {}),
+                    },
+                  }
+                : {}),
             },
             clientInfo: { name: "t3-code", version: "0.0.0" },
             onTermination: (error) =>
@@ -4623,6 +4671,18 @@ export const makeAcpAdapterV2 = Effect.fn("makeAcpAdapterV2")(function* (
               toolCall.toolCallId,
             ),
           });
+          const nasirElement =
+            flavor.nasirElements === true && status === "completed"
+              ? readNasirElement(toolCall.data.rawOutput)
+              : undefined;
+          const nasirApp =
+            nasirElement === undefined
+              ? undefined
+              : yield* snapshotNasirElement(
+                  context.input.threadId,
+                  toolCall.toolCallId,
+                  nasirElement,
+                );
           let turnItem: OrchestrationV2TurnItem;
           if (toolCall.toolCallId.startsWith("acp-compaction:")) {
             const summary =
@@ -4652,6 +4712,29 @@ export const makeAcpAdapterV2 = Effect.fn("makeAcpAdapterV2")(function* (
                   : undefined,
               );
             }
+          } else if (nasirElement !== undefined && nasirApp !== undefined) {
+            turnItem = {
+              ...base,
+              title: null,
+              ...mcpToolPresentation({
+                serverName: NASIR_ELEMENT_SERVER,
+                toolName: NASIR_ELEMENT_TOOL,
+                source: undefined,
+              }),
+              type: "dynamic_tool",
+              toolName: `${NASIR_ELEMENT_SERVER}.${NASIR_ELEMENT_TOOL}`,
+              input: rawInputRecord ?? {},
+              output: {
+                [MCP_APP_OUTPUT_KEY]: nasirApp,
+                result: {
+                  content: [{ type: "text", text: nasirElement.text }],
+                  structuredContent: nasirElement.structuredContent,
+                },
+              },
+            };
+            yield* emitProviderEvent({ type: "turn_item.updated", driver, turnItem });
+            yield* rearmDeferredFinalize(context);
+            return;
           } else if (mcpIdentity !== undefined) {
             const toolName = `${mcpIdentity.server}.${mcpIdentity.tool}`;
             const input =
@@ -9708,6 +9791,56 @@ export const makeAcpAdapterV2 = Effect.fn("makeAcpAdapterV2")(function* (
           },
           canResumeAfterRestart: canLoadSession || canResumeSession,
           events: Stream.fromEffectRepeat(Queue.take(events)),
+          ...(flavor.nasirElements === true
+            ? {
+                mcpApps: {
+                  listTools: ({ server }) =>
+                    Effect.succeed(server === NASIR_ELEMENT_SERVER ? [nasirActionTool] : []),
+                  callTool: Effect.fn("AcpAdapterV2.nasirElementAction")(function* (
+                    call: Parameters<ProviderAdapter.ProviderAdapterV2McpApps["callTool"]>[0],
+                  ) {
+                    const args = readNasirActionArguments(call.arguments);
+                    if (
+                      call.server !== NASIR_ELEMENT_SERVER ||
+                      call.tool !== NASIR_ELEMENT_ACTION_TOOL
+                    ) {
+                      return yield* new ProviderAdapter.ProviderAdapterProtocolError({
+                        driver,
+                        detail: "A Nasir element can call only inline_action.",
+                      });
+                    }
+                    if (args === undefined) return nasirActionRefused;
+                    const sessionId = yield* Ref.get(activeSessionId);
+                    if (sessionId === null) {
+                      return yield* new ProviderAdapter.ProviderAdapterProtocolError({
+                        driver,
+                        detail: "ACP runtime did not produce a session id",
+                      });
+                    }
+                    const answer = yield* runtime
+                      .request(NASIR_ELEMENT_ACTION_METHOD, { sessionId, ...args })
+                      .pipe(
+                        Effect.mapError(
+                          (cause) =>
+                            new ProviderAdapter.ProviderAdapterProtocolError({
+                              driver,
+                              detail: "Nasir did not answer the element's action.",
+                              payload: cause,
+                            }),
+                        ),
+                      );
+                    return readNasirActionResult(answer);
+                  }),
+                  readResource: () =>
+                    Effect.fail(
+                      new ProviderAdapter.ProviderAdapterProtocolError({
+                        driver,
+                        detail: "A Nasir element has no resources to read.",
+                      }),
+                    ),
+                } satisfies ProviderAdapter.ProviderAdapterV2McpApps,
+              }
+            : {}),
           ...(flavor.getModelContextWindow === undefined
             ? {}
             : {

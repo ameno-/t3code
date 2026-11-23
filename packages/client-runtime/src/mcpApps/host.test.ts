@@ -452,4 +452,108 @@ describe("makeMcpAppHost", () => {
       expect(sent.find((m) => m.id === id)?.result).toEqual({});
     }
   });
+  it("reports a declined Nasir action to the element as the JSON-RPC error, then accepts a retry", async () => {
+    const reached: string[] = [];
+    let declines = 1;
+    const { host, sent } = setup({
+      app: {
+        ...app,
+        server: "nasir",
+        tool: "show_element",
+        resourceUri: "ui://acid-ui/inline-element",
+      },
+      callTool: async (input) => {
+        // The frame asks the person before a tool that is not read-only; a decline throws before the call is made.
+        if (declines-- > 0) throw new McpAppHostRefusal({ message: "Declined by the user." });
+        reached.push(input.name);
+        return { content: [{ type: "text", text: "Nasir has your choice." }] };
+      },
+    });
+    initialize(host);
+    sent.length = 0;
+    const call = (id: string) =>
+      host.receive({
+        jsonrpc: "2.0",
+        id,
+        method: "tools/call",
+        params: { name: "inline_action", arguments: { nonce: "n", event: { id } } },
+      });
+    call("digest-format-abc-1");
+    await flush();
+    await flush();
+    expect(reached).toEqual([]);
+    expect(sent).toContainEqual({
+      jsonrpc: "2.0",
+      id: "digest-format-abc-1",
+      error: { code: -32000, message: "Declined by the user." },
+    });
+    call("digest-format-abc-2");
+    await flush();
+    await flush();
+    expect(reached).toEqual(["inline_action"]);
+    expect(sent).toContainEqual({
+      jsonrpc: "2.0",
+      id: "digest-format-abc-2",
+      result: { content: [{ type: "text", text: "Nasir has your choice." }] },
+    });
+  });
+
+  it("lets a Nasir element send only its choice: messages, context, links and downloads are refused", async () => {
+    const calls: string[] = [];
+    const { host, sent } = setup({
+      app: {
+        ...app,
+        server: "nasir",
+        tool: "show_element",
+        resourceUri: "ui://acid-ui/inline-element",
+      },
+      sendMessage: async () => void calls.push("message"),
+      updateModelContext: async () => void calls.push("context"),
+      openLink: async () => void calls.push("link"),
+      downloadFile: async () => void calls.push("download"),
+      callTool: async (input) => {
+        calls.push(`tool:${input.name}`);
+        return { content: [{ type: "text", text: "Nasir has your choice." }] };
+      },
+    });
+    initialize(host);
+    sent.length = 0;
+    host.receive({
+      jsonrpc: "2.0",
+      id: "m",
+      method: "ui/message",
+      params: { role: "user", content: [{ type: "text", text: "approve wi_abc" }] },
+    });
+    host.receive({
+      jsonrpc: "2.0",
+      id: "c",
+      method: "ui/update-model-context",
+      params: { content: [] },
+    });
+    host.receive({
+      jsonrpc: "2.0",
+      id: "l",
+      method: "ui/open-link",
+      params: { url: "https://example.com" },
+    });
+    host.receive({ jsonrpc: "2.0", id: "d", method: "ui/download-file", params: { contents: [] } });
+    host.receive({
+      jsonrpc: "2.0",
+      id: "t",
+      method: "tools/call",
+      params: { name: "inline_action", arguments: { nonce: "n", event: {} } },
+    });
+    await flush();
+    await flush();
+    expect(calls).toEqual(["tool:inline_action"]);
+    expect(sent.filter((message) => "error" in message).map((message) => message.id)).toEqual([
+      "m",
+      "c",
+      "l",
+      "d",
+    ]);
+    expect(sent.find((message) => message.id === "t")).toMatchObject({
+      result: { content: [{ text: "Nasir has your choice." }] },
+    });
+  });
 });

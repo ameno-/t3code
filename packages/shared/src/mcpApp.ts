@@ -269,3 +269,10 @@ export function mcpAppFileName(reference: McpAppReference): string {
   const name = reference.tool.replace(/[^\w.-]+/g, "-").slice(0, 80) || "app";
   return `${name}.html`;
 }
+
+/**
+ * Nasir's inline elements show only as an app of this MCP server. Such an app collects a choice or a reason and
+ * reports it as one typed tool call; it may not send chat messages, change the agent's context, open links or
+ * download files (`makeMcpAppHost` refuses all four).
+ */
+export const NASIR_ELEMENT_SERVER = "nasir";

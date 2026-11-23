@@ -3,7 +3,9 @@ import type {
   ChatAttachment,
   ServerSettings,
   ServerSettingsError,
+  ThreadId,
 } from "@t3tools/contracts";
+import type { McpAppReference } from "@t3tools/shared/mcpApp";
 import * as Context from "effect/Context";
 import type * as Effect from "effect/Effect";
 import type * as Option from "effect/Option";
@@ -50,6 +52,17 @@ export class ProviderHost extends Context.Service<
     /** Absolute attachment path, or null if the ID does not resolve inside attachmentsDir. */
     readonly resolveAttachmentPath: (attachment: ChatAttachment) => string | null;
     readonly resolveExtractedTextPath?: (path: string) => Effect.Effect<string | undefined>;
+    /**
+     * Stores an MCP app's HTML as a sandboxed attachment and returns its reference, or undefined when the
+     * resource is not a valid app. Optional so hosts without attachment storage still construct.
+     */
+    readonly snapshotMcpApp?: (input: {
+      readonly threadId: ThreadId;
+      readonly server: string;
+      readonly tool: string;
+      readonly resourceUri: string;
+      readonly contents: ReadonlyArray<unknown>;
+    }) => Effect.Effect<McpAppReference | undefined>;
     /**
      * Counts a running agent for local server discovery, so listeners carrying its
      * T3CODE_THREAD_ID show under its thread. Call the returned function when it stops.
