@@ -45,7 +45,7 @@ export function readNasirElement(rawOutput: unknown): NasirElement | undefined {
   };
 }
 
-/** The one tool an element may call. Read-only: it records a choice for Nasir to check, so T3 asks no second time. */
+/** The one tool an element may call. Not read-only, by the owner's decision: T3 asks before every action. */
 export const nasirActionTool: ProviderAdapter.ProviderAdapterV2McpTool = {
   name: NASIR_ELEMENT_ACTION_TOOL,
   inputSchema: {
@@ -54,7 +54,7 @@ export const nasirActionTool: ProviderAdapter.ProviderAdapterV2McpTool = {
     required: ["nonce", "event"],
   },
   _meta: { ui: { visibility: ["app"] } },
-  annotations: { readOnlyHint: true, title: "Send your choice to Nasir" },
+  annotations: { title: "Send your choice to Nasir" },
 };
 
 export function readNasirActionArguments(

@@ -49,12 +49,13 @@ describe("readNasirElement", () => {
 });
 
 describe("the one tool an element may call", () => {
-  it("is read-only and callable by the app only", () => {
+  it("is callable by the app only and not read-only, so T3 asks before every action", () => {
     expect(nasirActionTool).toMatchObject({
       name: "inline_action",
-      annotations: { readOnlyHint: true },
+      annotations: { title: "Send your choice to Nasir" },
       _meta: { ui: { visibility: ["app"] } },
     });
+    expect(nasirActionTool.annotations).not.toHaveProperty("readOnlyHint");
   });
 
   it("needs a non-empty nonce and an event object", () => {
