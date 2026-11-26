@@ -85,13 +85,12 @@ adds a picker.
 
 ## Vendored version
 
-`ameno-/media-pieces` c759275, `pieces/floor-avatars/source/` (GLBs 868524d;
-manifest `source_commit` 868524d). Schema `floor-avatars/2`. Four animal
-avatars: nasir owl, baashe fox, faris beaver, qasim cat. 603,708 bytes and
-28,186 triangles total, three skins each.
+`ameno-/media-pieces` 5a9d6df, `pieces/floor-avatars/source/` (GLBs 6995c99;
+manifest `source_commit` 6995c99). Schema `floor-avatars/2`. Four sculpted
+animals: nasir owl, baashe fox, faris beaver, qasim cat. 744,776 bytes and
+34,135 triangles total, three skins each.
 
 The Floor measures each model with `Box3.setFromObject(model, true)`; precise
 mode walks the vertices and matches the manifest's `height_m` exactly: nasir
-1.2886, baashe 1.2410, faris 1.1704, qasim 1.2404 m. The default corner-based
-Box3 overstates baashe and qasim by about 25 mm because their tallest part is a
-rotated ear, so the renderer asks for precise bounds.
+1.1316, baashe 1.2395, faris 1.1478, qasim 1.2146 m. The default corner-based
+Box3 can overstate rotated parts, so the renderer asks for precise bounds.

@@ -1,15 +1,15 @@
 {
   "schema": "floor-avatars/2",
-  "source_commit": "868524d",
+  "source_commit": "6995c99",
   "license": "Apache-2.0",
   "avatars": [
     {
       "id": "nasir",
       "file": "nasir.glb",
-      "sha256": "b1de2eda3b22ba528dc03e9d53dbfafd97ead14cac2732ed55a9f520def513d9",
-      "bytes": 162300,
-      "triangles": 7642,
-      "height_m": 1.2886,
+      "sha256": "9e1534dbeae7d9dc5b21f226145c55089e9106462dde2d73275d8b3479da4387",
+      "bytes": 186152,
+      "triangles": 8620,
+      "height_m": 1.1316,
       "accent": "#45707e",
       "joints": [
         {
@@ -59,51 +59,51 @@
         "barn": {
           "skin_base": {
             "color": "#d4a257",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#f8f5ec",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#5a3d22",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         },
         "snowy": {
           "skin_base": {
             "color": "#e6e4de",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#fbfaf6",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#3a3a3e",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         },
         "tawny": {
           "skin_base": {
             "color": "#6b3a24",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#d9bb8c",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#2e1a10",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         }
@@ -112,10 +112,10 @@
     {
       "id": "baashe",
       "file": "baashe.glb",
-      "sha256": "9371e5ebe8d195d61ee9e8719d5ba7543eb4fd4c33db62caaf153af1dfd53b90",
-      "bytes": 155156,
-      "triangles": 7486,
-      "height_m": 1.241,
+      "sha256": "7ce6b53a2f1b78a67f770d6fee981f3a6fea845a36e010050a9d64240a557ae8",
+      "bytes": 193316,
+      "triangles": 8836,
+      "height_m": 1.2395,
       "accent": "#3a6ab4",
       "joints": [
         {
@@ -165,51 +165,51 @@
         "red": {
           "skin_base": {
             "color": "#d9621f",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#f3e6d3",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#2b1d17",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         },
         "arctic": {
           "skin_base": {
             "color": "#e9eef2",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#ffffff",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#6c7480",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         },
         "silver": {
           "skin_base": {
             "color": "#8c8f96",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#d8dade",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#1f2024",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         }
@@ -218,10 +218,10 @@
     {
       "id": "faris",
       "file": "faris.glb",
-      "sha256": "144f77ae8592e6483f2fd8ecd7d83714c9e44544c82d9e385d4d12c403518dd6",
-      "bytes": 149900,
-      "triangles": 6946,
-      "height_m": 1.1704,
+      "sha256": "6a99cade1c89897004703d58877b2ebb96d27c7e8301e7d5baf7763cdac761a4",
+      "bytes": 195504,
+      "triangles": 9185,
+      "height_m": 1.1478,
       "accent": "#4a7550",
       "joints": [
         {
@@ -271,51 +271,51 @@
         "brown": {
           "skin_base": {
             "color": "#8a5a34",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#cfa87a",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#3c2616",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         },
         "chestnut": {
           "skin_base": {
             "color": "#a8472a",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#e0b48a",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#4a1f14",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         },
         "pale": {
           "skin_base": {
             "color": "#c6a070",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#ecd9b8",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#6a4a2a",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         }
@@ -324,10 +324,10 @@
     {
       "id": "qasim",
       "file": "qasim.glb",
-      "sha256": "8a3a5786fcedb39699b68150b64a58c158062e2484b76383ddd4863f57f7dc41",
-      "bytes": 136352,
-      "triangles": 6112,
-      "height_m": 1.2404,
+      "sha256": "acce5acf4fe39e7eff19928b5abde1755b9841aaa2245ac0e57c7c41ba0dd9a8",
+      "bytes": 169804,
+      "triangles": 7494,
+      "height_m": 1.2146,
       "accent": "#8a5a6a",
       "joints": [
         {
@@ -377,51 +377,51 @@
         "tabby": {
           "skin_base": {
             "color": "#c7863f",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#f0d9b0",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#5b3a1c",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         },
         "ink": {
           "skin_base": {
             "color": "#3a3a40",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#b4b6bc",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#17171a",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         },
         "grey": {
           "skin_base": {
             "color": "#8d949c",
-            "roughness": 0.8,
+            "roughness": 0.86,
             "metallic": 0
           },
           "skin_belly": {
             "color": "#d9dde0",
-            "roughness": 0.8,
+            "roughness": 0.92,
             "metallic": 0
           },
           "skin_mark": {
             "color": "#4a4f56",
-            "roughness": 0.8,
+            "roughness": 0.78,
             "metallic": 0
           }
         }
