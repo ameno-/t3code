@@ -656,7 +656,9 @@ function collectAccentMaterials(root: Object3D): AccentMaterial[] {
 
 function groundAvatar(model: Object3D, fallbackHeight: number): number {
   model.updateWorldMatrix(true, true);
-  const bounds = new Box3().setFromObject(model);
+  // Precise mode walks vertices. The default corner-based box overshoots the rotated ear tips
+  // on baashe and qasim by about 25 mm, which would scale the whole avatar down.
+  const bounds = new Box3().setFromObject(model, true);
   if (bounds.isEmpty()) return fallbackHeight;
   const size = bounds.getSize(new Vector3());
   const center = bounds.getCenter(new Vector3());

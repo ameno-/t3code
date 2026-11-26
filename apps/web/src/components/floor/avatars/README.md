@@ -90,8 +90,8 @@ manifest `source_commit` 868524d). Schema `floor-avatars/2`. Four animal
 avatars: nasir owl, baashe fox, faris beaver, qasim cat. 603,708 bytes and
 28,186 triangles total, three skins each.
 
-The Floor scales each model by its loaded three.js bounding box. Measured
-heights: nasir 1.2886, baashe 1.2657, faris 1.1704, qasim 1.2685 m. The
-manifest's baashe and qasim `height_m` values (1.241 and 1.2404) do not match
-the bounding box; the renderer uses the measured box, and the desk has been
-asked to correct the metadata.
+The Floor measures each model with `Box3.setFromObject(model, true)`; precise
+mode walks the vertices and matches the manifest's `height_m` exactly: nasir
+1.2886, baashe 1.2410, faris 1.1704, qasim 1.2404 m. The default corner-based
+Box3 overstates baashe and qasim by about 25 mm because their tallest part is a
+rotated ear, so the renderer asks for precise bounds.
