@@ -23,8 +23,10 @@ export type FloorAvatarAsset = {
   heightM: number;
 };
 
+export type FloorAvatarSchema = "floor-avatars/1" | "floor-avatars/2";
+
 export type FloorAvatarManifest = {
-  schema: "floor-avatars/1";
+  schema: FloorAvatarSchema;
   avatars: FloorAvatarAsset[];
   sourceCommit: string | null;
   license: string | null;
@@ -37,6 +39,19 @@ export type FloorJoint = {
   lower: number;
   upper: number;
 };
+
+// The GLBs also carry brow and eyelid joints. They stay at rest until there is a face plan.
+const ANIMATED_FLOOR_JOINTS = new Set([
+  "head_turn",
+  "arm_l_swing",
+  "arm_r_swing",
+  "leg_l_swing",
+  "leg_r_swing",
+]);
+
+export function isAnimatedFloorJoint(name: string): boolean {
+  return ANIMATED_FLOOR_JOINTS.has(name);
+}
 
 type JsonObject = Record<string, unknown>;
 
@@ -95,9 +110,14 @@ export function parseSand3dJoint(userData: unknown): FloorJoint | null {
 }
 
 export function parseFloorAvatarManifest(value: unknown): FloorAvatarManifest | null {
-  if (!isObject(value) || value.schema !== "floor-avatars/1" || !Array.isArray(value.avatars)) {
+  if (
+    !isObject(value) ||
+    (value.schema !== "floor-avatars/1" && value.schema !== "floor-avatars/2") ||
+    !Array.isArray(value.avatars)
+  ) {
     return null;
   }
+  const schema = value.schema;
   const avatars: FloorAvatarAsset[] = [];
   const seen = new Set<string>();
   for (const candidate of value.avatars) {
@@ -124,7 +144,7 @@ export function parseFloorAvatarManifest(value: unknown): FloorAvatarManifest | 
     });
   }
   return {
-    schema: "floor-avatars/1",
+    schema,
     avatars,
     sourceCommit: typeof value.source_commit === "string" ? value.source_commit : null,
     license: typeof value.license === "string" ? value.license : null,

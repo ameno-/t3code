@@ -1,6 +1,191 @@
 {
   "schema": "floor-avatars/1",
-  "source_commit": null,
-  "license": "Apache-2.0 (sand3d); generated assets live in ameno-/media-pieces pieces/floor-avatars",
-  "avatars": []
+  "source_commit": "bd5f66e61bafce51f24167c4d2d59bd173d493ff",
+  "license": "Apache-2.0",
+  "avatars": [
+    {
+      "id": "nasir",
+      "file": "nasir.glb",
+      "sha256": "ef473a6e84cd616fb9eef2085bb26f14353e4145d82bcc4d6a485dad06825ff1",
+      "bytes": 142160,
+      "triangles": 7158,
+      "height_m": 1.2886,
+      "accent": "#45707e",
+      "joints": [
+        {
+          "node": "arm_l_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -1.0471975511965976,
+          "upper": 1.0471975511965976
+        },
+        {
+          "node": "arm_r_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -1.0471975511965976,
+          "upper": 1.0471975511965976
+        },
+        {
+          "node": "head_turn",
+          "type": "revolute",
+          "axis": [0.0, 1.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        },
+        {
+          "node": "leg_l_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        },
+        {
+          "node": "leg_r_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        }
+      ]
+    },
+    {
+      "id": "baashe",
+      "file": "baashe.glb",
+      "sha256": "41f917f0c4c6f91d1a900bbeae159e74301fbacabbce0bc7c26349699e397557",
+      "bytes": 132928,
+      "triangles": 6902,
+      "height_m": 1.1494,
+      "accent": "#3a6ab4",
+      "joints": [
+        {
+          "node": "arm_l_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -1.0471975511965976,
+          "upper": 1.0471975511965976
+        },
+        {
+          "node": "arm_r_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -1.0471975511965976,
+          "upper": 1.0471975511965976
+        },
+        {
+          "node": "head_turn",
+          "type": "revolute",
+          "axis": [0.0, 1.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        },
+        {
+          "node": "leg_l_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        },
+        {
+          "node": "leg_r_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        }
+      ]
+    },
+    {
+      "id": "faris",
+      "file": "faris.glb",
+      "sha256": "f3e0b34ddc9b336f138efff89ac03d9ab184b9f6f973fe5d7eb9563b5e8b15b6",
+      "bytes": 138768,
+      "triangles": 6826,
+      "height_m": 1.1704,
+      "accent": "#4a7550",
+      "joints": [
+        {
+          "node": "arm_l_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -1.0471975511965976,
+          "upper": 1.0471975511965976
+        },
+        {
+          "node": "arm_r_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -1.0471975511965976,
+          "upper": 1.0471975511965976
+        },
+        {
+          "node": "head_turn",
+          "type": "revolute",
+          "axis": [0.0, 1.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        },
+        {
+          "node": "leg_l_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        },
+        {
+          "node": "leg_r_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        }
+      ]
+    },
+    {
+      "id": "qasim",
+      "file": "qasim.glb",
+      "sha256": "727a1ec1d629ec437595714afc26281b51679e3b3d62d186afa2b1113f2c0cec",
+      "bytes": 117840,
+      "triangles": 6012,
+      "height_m": 1.1718,
+      "accent": "#8a5a6a",
+      "joints": [
+        {
+          "node": "arm_l_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -1.0471975511965976,
+          "upper": 1.0471975511965976
+        },
+        {
+          "node": "arm_r_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -1.0471975511965976,
+          "upper": 1.0471975511965976
+        },
+        {
+          "node": "head_turn",
+          "type": "revolute",
+          "axis": [0.0, 1.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        },
+        {
+          "node": "leg_l_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        },
+        {
+          "node": "leg_r_swing",
+          "type": "revolute",
+          "axis": [1.0, 0.0, 0.0],
+          "lower": -0.6981317007977318,
+          "upper": 0.6981317007977318
+        }
+      ]
+    }
+  ]
 }

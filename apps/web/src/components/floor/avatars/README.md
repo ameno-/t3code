@@ -72,3 +72,15 @@ keeps the placeholder for any worker whose file is missing or invalid.
 
 The renderer requires `id`, `file`, `sha256` and `bytes`; the other fields are kept for
 provenance. Colours remain owned by `FloorPage.tsx`, not the manifest.
+
+`floor-avatars/2` adds an optional `skins` block and three slot materials (`skin_base`,
+`skin_belly`, `skin_mark`). The loader accepts both schemas and ignores skins for now; the
+authored colours are the default skin, so a round-2 drop renders unchanged until the Floor
+adds a picker.
+
+## Vendored version
+
+`ameno-/media-pieces` 398bc78, `pieces/floor-avatars/source/` (manifest
+`source_commit` bd5f66e). Four GLBs, 531,696 bytes and 26,898 triangles total.
+The manifest's `height_m` values run 1.1494 to 1.2886 m; the Floor scales each
+model by its loaded height, which matches the manifest.

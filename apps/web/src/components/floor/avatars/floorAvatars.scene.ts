@@ -33,6 +33,7 @@ import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.j
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import {
   bodyBob,
+  isAnimatedFloorJoint,
   jointAngle,
   parseFloorAvatarManifest,
   parseSand3dJoint,
@@ -626,7 +627,7 @@ function bindJoints(root: Object3D): JointRuntime[] {
   const joints: JointRuntime[] = [];
   root.traverse((node) => {
     const joint = parseSand3dJoint(node.userData);
-    if (!joint) return;
+    if (!joint || !isAnimatedFloorJoint(joint.name)) return;
     joints.push({
       node,
       rest: node.quaternion.clone(),

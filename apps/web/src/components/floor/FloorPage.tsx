@@ -324,6 +324,7 @@ export function FloorPage() {
 const FLOOR_CSS = `
 .nasir-floor-stage{position:relative;height:470px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--background)}
 .nasir-floor-stage::before{content:"";position:absolute;left:0;right:0;top:26px;height:158px;z-index:0;pointer-events:none;background:radial-gradient(120% 160% at 50% 0%,color-mix(in srgb,var(--muted) 72%,transparent),transparent 68%)}
+.nasir-floor-stage::after{content:"";position:absolute;left:0;right:0;top:80px;height:130px;z-index:0;pointer-events:none;background:radial-gradient(75% 55% at 50% 50%,color-mix(in srgb,var(--muted) 55%,transparent),transparent 72%)}
 .nasir-floor-col{position:absolute;top:0;bottom:0;width:20%;border-right:1px dashed var(--border);z-index:0}
 .nasir-floor-col:last-of-type{border-right:0}
 .nasir-floor-col h2{white-space:nowrap;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.6;margin:8px 0 0;text-align:center;font-weight:600}

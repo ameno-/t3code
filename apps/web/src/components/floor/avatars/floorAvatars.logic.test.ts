@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 
 import {
   bodyBob,
+  isAnimatedFloorJoint,
   jointAngle,
   parseFloorAvatarManifest,
   parseSand3dJoint,
@@ -37,6 +38,23 @@ describe("parseFloorAvatarManifest", () => {
     });
   });
 
+  it("accepts a later schema with skins, which the renderer does not apply yet", () => {
+    const manifest = parseFloorAvatarManifest({
+      schema: "floor-avatars/2",
+      avatars: [
+        {
+          id: "nasir",
+          file: "nasir.glb",
+          sha256: sha,
+          bytes: 1,
+          skins: { default: { skin_base: { color: "#45707e", roughness: 0.8 } } },
+        },
+      ],
+    });
+    expect(manifest?.schema).toBe("floor-avatars/2");
+    expect(manifest?.avatars.map((avatar) => avatar.id)).toEqual(["nasir"]);
+  });
+
   it("keeps an empty manifest valid so the placeholder stays", () => {
     expect(parseFloorAvatarManifest({ schema: "floor-avatars/1", avatars: [] })).toMatchObject({
       avatars: [],
@@ -44,7 +62,7 @@ describe("parseFloorAvatarManifest", () => {
   });
 
   it("rejects the wrong schema or a missing avatars array", () => {
-    expect(parseFloorAvatarManifest({ schema: "floor-avatars/2", avatars: [] })).toBeNull();
+    expect(parseFloorAvatarManifest({ schema: "floor-avatars/3", avatars: [] })).toBeNull();
     expect(parseFloorAvatarManifest({ schema: "floor-avatars/1" })).toBeNull();
     expect(parseFloorAvatarManifest(null)).toBeNull();
   });
@@ -165,6 +183,17 @@ describe("jointAngle", () => {
     };
     expect(jointAngle(upOnly, true, (3 * Math.PI) / (2 * 7.2), 0)).toBe(0);
     expect(jointAngle(downOnly, true, Math.PI / (2 * 7.2), 0)).toBe(0);
+  });
+});
+
+describe("isAnimatedFloorJoint", () => {
+  it("drives the body and limbs but leaves the face joints at rest", () => {
+    for (const name of ["head_turn", "arm_l_swing", "arm_r_swing", "leg_l_swing", "leg_r_swing"]) {
+      expect(isAnimatedFloorJoint(name)).toBe(true);
+    }
+    for (const name of ["brow_l_tilt", "brow_r_tilt", "lid_l_blink", "lid_r_blink"]) {
+      expect(isAnimatedFloorJoint(name)).toBe(false);
+    }
   });
 });
 
