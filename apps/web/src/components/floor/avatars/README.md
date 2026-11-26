@@ -40,11 +40,16 @@ keeps the placeholder for any worker whose file is missing or invalid.
   `body → arm_l_swing → arm_l`. The joint node's origin is the shoulder; the part node holds
   the mesh. The Floor rotates the joint node, never the part node.
 - `body` contains `head_turn`, `arm_l_swing` and `arm_r_swing`; `leg_l_swing` and
-  `leg_r_swing` sit under `avatar_<id>` so the feet stay planted.
+  `leg_r_swing` sit under `avatar_<id>` so the feet stay planted. A `tail` node
+  sits under an optional `tail_wag` joint under `body`; the Floor ignores
+  `tail_wag` for now.
 - Each joint node carries sand3d's `extras.s3d_joint`: `{ name, type, axis, lower, upper }`,
   with `axis` in the node's local glTF frame and `lower`/`upper` in radians. That is
   authoritative; the Floor clamps every pose to it.
-- One material named `accent` carries the worker colour. The Floor retints it at runtime.
+- One material named `accent` carries the worker colour. The Floor retints it at
+  runtime. `skin_base`, `skin_belly` and `skin_mark` are the skin slots; their
+  authored colours are the default skin. `floor-avatars/2` may add a `skins`
+  block; the Floor accepts it but does not apply skins yet.
 - `_l` is on `+X`. Face nodes `eye_l`, `eye_r`, `brow_l`, `brow_r`, `nose` and `mouth` hang
   under `head`; the renderer ignores them for now.
 
@@ -80,7 +85,13 @@ adds a picker.
 
 ## Vendored version
 
-`ameno-/media-pieces` 398bc78, `pieces/floor-avatars/source/` (manifest
-`source_commit` bd5f66e). Four GLBs, 531,696 bytes and 26,898 triangles total.
-The manifest's `height_m` values run 1.1494 to 1.2886 m; the Floor scales each
-model by its loaded height, which matches the manifest.
+`ameno-/media-pieces` c759275, `pieces/floor-avatars/source/` (GLBs 868524d;
+manifest `source_commit` 868524d). Schema `floor-avatars/2`. Four animal
+avatars: nasir owl, baashe fox, faris beaver, qasim cat. 603,708 bytes and
+28,186 triangles total, three skins each.
+
+The Floor scales each model by its loaded three.js bounding box. Measured
+heights: nasir 1.2886, baashe 1.2657, faris 1.1704, qasim 1.2685 m. The
+manifest's baashe and qasim `height_m` values (1.241 and 1.2404) do not match
+the bounding box; the renderer uses the measured box, and the desk has been
+asked to correct the metadata.
