@@ -856,6 +856,7 @@ const layerMakeRoutes = Layer.mergeAll(
     ),
     ServerHttp.layerOtlpTracesProxyRoute,
     ServerHttp.layerNasirFloorRoute,
+    ServerHttp.layerNasirVoiceRoute,
     ServerHttp.layerNasirHomeRoute,
     ServerHttp.layerNasirComputerFilesRoute,
     ServerHttp.layerNasirComputerFileRoute,

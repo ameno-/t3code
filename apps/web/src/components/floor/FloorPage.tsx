@@ -1,6 +1,7 @@
 // Nasir Floor (fork-only): a live factory view of Nasir and its arms. Polls the server's read-only
 // /api/nasir/floor snapshot; nothing here writes to Nasir.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { NasirCallButton } from "../nasir/NasirCall";
 
 import { FloorAvatars } from "./avatars/FloorAvatars";
 import type { FloorAvatarAssetsState, FloorAvatarWorker } from "./avatars/floorAvatars.logic";
@@ -202,7 +203,10 @@ export function FloorPage() {
       }}
     >
       <style>{FLOOR_CSS}</style>
-      <h1 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Nasir Floor</h1>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+        <h1 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Nasir Floor</h1>
+        <NasirCallButton />
+      </div>
       <p style={{ margin: "2px 0 10px", fontSize: 12, opacity: 0.7 }}>
         {snapshot === null
           ? (failure ?? "Loading…")
