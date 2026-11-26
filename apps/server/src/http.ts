@@ -1,4 +1,5 @@
 import { readFloor } from "./nasirFloor.ts";
+import { readNasirVoiceConfig } from "./nasirVoice.ts";
 import { readHome } from "./nasirHome.ts";
 import { listFiles, readFile, readTranscript, type ComputerResult } from "./nasirComputer.ts";
 import * as Mime from "effect/http/Mime";
@@ -420,6 +421,19 @@ export const layerNasirFloorRoute = HttpRouter.add(
     yield* authenticateRawRouteWithScope(AuthOrchestrationReadScope);
     const snapshot = yield* Effect.promise(() => readFloor());
     return HttpServerResponse.jsonUnsafe(snapshot, {
+      headers: { "cache-control": "private, no-store" },
+    });
+  }),
+);
+
+// Nasir voice (fork-only): the configured call page origin for the web app. Read-only; this server never proxies
+// audio, and the voice service's gateway token never reaches the browser.
+export const layerNasirVoiceRoute = HttpRouter.add(
+  "GET",
+  "/api/nasir/voice",
+  Effect.gen(function* () {
+    yield* authenticateRawRouteWithScope(AuthOrchestrationReadScope);
+    return HttpServerResponse.jsonUnsafe(readNasirVoiceConfig(), {
       headers: { "cache-control": "private, no-store" },
     });
   }),
