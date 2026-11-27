@@ -1,5 +1,6 @@
 import { readFloor } from "./nasirFloor.ts";
 import { readNasirVoiceConfig } from "./nasirVoice.ts";
+import { mintNasirCallTicket, NASIR_PROVIDER } from "./nasirCallTicket.ts";
 import { readHome } from "./nasirHome.ts";
 import { listFiles, readFile, readTranscript, type ComputerResult } from "./nasirComputer.ts";
 import * as Mime from "effect/http/Mime";
@@ -31,6 +32,7 @@ import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
 import * as Path from "effect/Path";
 import * as Schema from "effect/Schema";
+import * as SqlClient from "effect/sql/SqlClient";
 import * as Stream from "effect/Stream";
 import * as Tracer from "effect/Tracer";
 import { cast, pipe } from "effect/Function";
@@ -507,6 +509,35 @@ export const layerNasirVoiceRoute = HttpRouter.add(
   Effect.gen(function* () {
     yield* authenticateRawRouteWithScope(AuthOrchestrationReadScope);
     return HttpServerResponse.jsonUnsafe(readNasirVoiceConfig(), {
+      headers: { "cache-control": "private, no-store" },
+    });
+  }),
+);
+
+// Nasir voice (fork-only): a single-use ticket that puts a call in this thread's Nasir conversation. A thread with
+// no Nasir conversation gets a reason instead, and the web app places an ordinary call.
+export const layerNasirVoiceTicketRoute = HttpRouter.add(
+  "POST",
+  "/api/nasir/voice/ticket",
+  Effect.gen(function* () {
+    yield* authenticateRawRouteWithScope(AuthOrchestrationOperateScope);
+    const request = yield* HttpServerRequest.HttpServerRequest;
+    const url = requestUrl(request);
+    const threadId = Option.isSome(url) ? url.value.searchParams.get("threadId") : null;
+    if (!threadId) return HttpServerResponse.text("Bad Request", { status: 400 });
+    const sql = yield* SqlClient.SqlClient;
+    const rows = yield* sql<{ readonly native_id: string | null }>`
+      SELECT json_extract(provider.payload_json, '$.nativeThreadRef.nativeId') AS native_id
+      FROM orchestration_v2_projection_provider_threads AS provider
+      JOIN orchestration_v2_projection_threads AS thread ON thread.thread_id = provider.thread_id
+      WHERE provider.thread_id = ${threadId}
+        AND provider.driver = ${NASIR_PROVIDER.driver}
+        AND provider.provider_instance_id = ${NASIR_PROVIDER.instanceId}
+        AND thread.deleted_at IS NULL
+      LIMIT 1
+    `.pipe(Effect.orDie);
+    const ticket = yield* Effect.promise(() => mintNasirCallTicket(rows[0]?.native_id ?? null));
+    return HttpServerResponse.jsonUnsafe(ticket, {
       headers: { "cache-control": "private, no-store" },
     });
   }),

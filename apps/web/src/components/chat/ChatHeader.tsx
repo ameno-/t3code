@@ -411,7 +411,7 @@ export const ChatHeader = memo(function ChatHeader({
         </WorkspaceBreadcrumbItem>
       </WorkspaceBreadcrumb>
       {isServerThread ? <GuestShareIndicator threadRef={activeThreadRef} /> : null}
-      <NasirCallButton compact />
+      <NasirCallButton compact {...(isServerThread ? { threadId: activeThreadId } : {})} />
     </div>
   );
 });

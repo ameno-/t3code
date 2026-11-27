@@ -919,6 +919,7 @@ const layerMakeRoutes = Layer.mergeAll(
     ServerHttp.layerDesktopReadinessProofRoute,
     ServerHttp.layerNasirFloorRoute,
     ServerHttp.layerNasirVoiceRoute,
+    ServerHttp.layerNasirVoiceTicketRoute,
     ServerHttp.layerNasirHomeRoute,
     ServerHttp.layerNasirComputerFilesRoute,
     ServerHttp.layerNasirComputerFileRoute,
