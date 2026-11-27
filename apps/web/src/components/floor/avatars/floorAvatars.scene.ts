@@ -1,6 +1,7 @@
-// The Floor's 3D layer. three.js is loaded only on /floor through a dynamic import, so the
-// rest of the web client pays nothing for it. Until the Media desk's GLBs land, each worker
-// gets a placeholder built from the same node and joint names the GLBs will use.
+// The Floor's GLB fallback. The r6 shader is the default; this scene is loaded only when the
+// shader fails to compile or link. three.js is loaded only on /floor through a dynamic
+// import, so the rest of the web client pays nothing for it.
+import { observeResize } from "~/lib/observeResize";
 import {
   ACESFilmicToneMapping,
   Box3,
@@ -401,8 +402,7 @@ export function mountFloorAvatars(
     if (frame === 0) renderStill();
   }
 
-  const observer = new ResizeObserver(resize);
-  observer.observe(host);
+  const stopResize = observeResize(host, resize);
   document.addEventListener("visibilitychange", onVisibility);
   media.addEventListener("change", onMotionPreference);
   renderer.domElement.addEventListener("webglcontextlost", onContextLost);
@@ -432,7 +432,7 @@ export function mountFloorAvatars(
       if (disposed) return;
       disposed = true;
       stop();
-      observer.disconnect();
+      stopResize();
       document.removeEventListener("visibilitychange", onVisibility);
       media.removeEventListener("change", onMotionPreference);
       renderer.domElement.removeEventListener("webglcontextlost", onContextLost);

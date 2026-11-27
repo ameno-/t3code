@@ -55,6 +55,7 @@
           "upper": 0.6981317007977318
         }
       ],
+      "default_skin": "barn",
       "skins": {
         "barn": {
           "skin_base": {
@@ -161,6 +162,7 @@
           "upper": 0.6981317007977318
         }
       ],
+      "default_skin": "red",
       "skins": {
         "red": {
           "skin_base": {
@@ -267,6 +269,7 @@
           "upper": 0.6981317007977318
         }
       ],
+      "default_skin": "brown",
       "skins": {
         "brown": {
           "skin_base": {
@@ -373,6 +376,7 @@
           "upper": 0.6981317007977318
         }
       ],
+      "default_skin": "tabby",
       "skins": {
         "tabby": {
           "skin_base": {
