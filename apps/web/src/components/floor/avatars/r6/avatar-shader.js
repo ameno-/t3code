@@ -731,11 +731,6 @@ void main() {
 }
 `;
 
-export const VERTEX_QUAD = `in vec2 position;
-out vec2 vUv;
-void main() { vUv = position * 0.5 + 0.5; gl_Position = vec4(position, 0.0, 1.0); }
-`;
-
 export const VERTEX_THREE = `in vec3 position;
 in vec2 uv;
 uniform mat4 modelViewMatrix;
@@ -744,7 +739,7 @@ out vec2 vUv;
 void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
 `;
 
-export const srgbToLinear = (hex) => {
+const srgbToLinear = (hex) => {
   const n = parseInt(hex.replace("#", ""), 16);
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.pow(v / 255, 2.2));
 };

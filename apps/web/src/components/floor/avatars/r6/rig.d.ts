@@ -13,7 +13,4 @@ export type FloorAvatarRig = {
   arm: number;
 };
 
-export const CYCLE_LEN: number;
 export function rigAt(state: FloorAvatarState, t: number): FloorAvatarRig;
-export function stateAt(state: FloorAvatarState, t: number): FloorAvatarState;
-export function seat(k: number): number;

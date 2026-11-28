@@ -1,7 +1,7 @@
 // Contract with the Media desk's floor-avatars piece. The r6 shader is the Floor default;
 // the r3 GLBs are the compile/link fallback. Both are vendored from ameno-/media-pieces.
 
-export const FLOOR_AVATAR_IDS = ["nasir", "baashe", "faris", "qasim"] as const;
+const FLOOR_AVATAR_IDS = ["nasir", "baashe", "faris", "qasim"] as const;
 export type FloorAvatarId = (typeof FLOOR_AVATAR_IDS)[number];
 
 export type FloorAvatarWorker = {

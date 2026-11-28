@@ -1,10 +1,8 @@
 // Nasir Floor (fork-only): one read-only snapshot of what Nasir and its arms are doing, for the Floor page.
 //
-// Source of truth is Nasir's gateway, read with the same `converse`/`read` token the ACP bridge uses
-// (NASIR_GATEWAY_URL, NASIR_GATEWAY_TOKEN_FILE). Only GET /v1/cases, /v1/cases/:id and /v1/asks are called; nothing
-// here approves, steers or stops. Without a gateway configured, or with NASIR_FLOOR_DEMO=1, the page shows a
-// time-driven demo so the fork can run anywhere (it is labelled "demo" in the snapshot).
-import { readFileSync } from "node:fs";
+// It reads the gateway with the same converse/read token as the ACP bridge; nothing here approves, steers or
+// stops, and NASIR_FLOOR_DEMO=1 (or no gateway) serves a time-driven demo labelled "demo".
+import * as NodeFS from "node:fs";
 
 export type FloorTask = {
   readonly id: string;
@@ -59,12 +57,15 @@ const rows = (value: unknown): Row[] =>
   Array.isArray(value)
     ? value.filter((row): row is Row => typeof row === "object" && row !== null)
     : [];
-const text = (value: unknown): string => String(value ?? "").replace(/\s+/g, " ").trim();
+const text = (value: unknown): string =>
+  String(value ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
 const record = (value: unknown): Row =>
   typeof value === "object" && value !== null ? (value as Row) : {};
 
 async function gatewaySnapshot(url: string, tokenFile: string): Promise<FloorSnapshot> {
-  const token = readFileSync(tokenFile, "utf8").trim();
+  const token = NodeFS.readFileSync(tokenFile, "utf8").trim();
   const read = async (path: string): Promise<unknown> => {
     const response = await fetch(`${url}${path}`, {
       headers: { authorization: `Bearer ${token}` },
@@ -91,19 +92,19 @@ async function gatewaySnapshot(url: string, tokenFile: string): Promise<FloorSna
     const notes = new Map(
       rows(body.facts)
         .filter((fact) => fact.kind === "NoteAdded")
-        .map((fact) => [text(record(fact.payload).taskId), text(record(fact.payload).text)] as const),
+        .map(
+          (fact) => [text(record(fact.payload).taskId), text(record(fact.payload).text)] as const,
+        ),
     );
-    return rows(body.tasks).map(
-      (task): FloorTask => ({
-        id: text(task.id),
-        caseId: text(row.id),
-        caseTitle: text(row.title),
-        title: text(task.title),
-        arm: text(task.arm),
-        status: text(task.status),
-        note: notes.get(text(task.id)) ?? null,
-      }),
-    );
+    return rows(body.tasks).map((task): FloorTask => ({
+      id: text(task.id),
+      caseId: text(row.id),
+      caseTitle: text(row.title),
+      title: text(task.title),
+      arm: text(task.arm),
+      status: text(task.status),
+      note: notes.get(text(task.id)) ?? null,
+    }));
   });
   return {
     source: "gateway",
@@ -112,18 +113,16 @@ async function gatewaySnapshot(url: string, tokenFile: string): Promise<FloorSna
     tasks,
     asks: asks
       .filter((row) => row.stale !== true)
-      .map(
-        (row): FloorAsk => ({
-          workItemId: text(row.workItemId),
-          title: text(row.title),
-          desk: text(row.desk),
-          reason: text(row.reason),
-          approveUrl:
-            approvePage && (row.desk === "approve start" || row.desk === "approve delivery")
-              ? `${approvePage.replace(/\/+$/, "")}/approve?wi=${encodeURIComponent(text(row.workItemId))}&action=${row.desk === "approve start" ? "start" : "deliver"}`
-              : null,
-        }),
-      ),
+      .map((row): FloorAsk => ({
+        workItemId: text(row.workItemId),
+        title: text(row.title),
+        desk: text(row.desk),
+        reason: text(row.reason),
+        approveUrl:
+          approvePage && (row.desk === "approve start" || row.desk === "approve delivery")
+            ? `${approvePage.replace(/\/+$/, "")}/approve?wi=${encodeURIComponent(text(row.workItemId))}&action=${row.desk === "approve start" ? "start" : "deliver"}`
+            : null,
+      })),
   };
 }
 
@@ -136,24 +135,39 @@ const DEMO_TASKS: ReadonlyArray<{ readonly title: string; readonly arm: string }
   { title: "Review PR #508", arm: "qasim" },
 ];
 const DEMO_NOTES: Record<string, ReadonlyArray<string>> = {
-  baashe: ["Read 14 sources, 3 conflict", "Packet sealed, 9 claims cited", "Searching for primary docs"],
+  baashe: [
+    "Read 14 sources, 3 conflict",
+    "Packet sealed, 9 claims cited",
+    "Searching for primary docs",
+  ],
   faris: ["Branch pushed, 2 files changed", "Tests running in the VM", "Fixing a type error"],
-  qasim: ["Checking claim 4 against source", "Verdict: 1 claim unsupported", "Reproduced the failure"],
+  qasim: [
+    "Checking claim 4 against source",
+    "Verdict: 1 claim unsupported",
+    "Reproduced the failure",
+  ],
 };
 
 /** Six Tasks that walk the line on a 60 s loop, offset 10 s apart, so the page always has something moving. */
-export function demoSnapshot(now: number): FloorSnapshot {
+function demoSnapshot(now: number): FloorSnapshot {
   const seconds = now / 1000;
   const tasks = DEMO_TASKS.map((task, index): FloorTask => {
     const t = (seconds + index * 10) % 60;
     const cycle = Math.floor((seconds + index * 10) / 60);
     const status =
-      t < 6 ? "open"
-      : t < 12 ? "assigned"
-      : t < 36 ? "working"
-      : t < 42 ? (index % 3 === 0 ? "blocked" : "working")
-      : t < 50 ? "done_proposed"
-      : "closed";
+      t < 6
+        ? "open"
+        : t < 12
+          ? "assigned"
+          : t < 36
+            ? "working"
+            : t < 42
+              ? index % 3 === 0
+                ? "blocked"
+                : "working"
+              : t < 50
+                ? "done_proposed"
+                : "closed";
     const notes = DEMO_NOTES[task.arm] ?? [];
     return {
       id: `task_demo${index}x${cycle}`,
@@ -163,10 +177,13 @@ export function demoSnapshot(now: number): FloorSnapshot {
       arm: task.arm,
       status,
       note:
-        status === "blocked" ? "Needs your call on scope"
-        : status === "done_proposed" ? "Done, waiting for Qasim's check"
-        : status === "open" ? null
-        : (notes[Math.floor(t / 8) % notes.length] ?? null),
+        status === "blocked"
+          ? "Needs your call on scope"
+          : status === "done_proposed"
+            ? "Done, waiting for Qasim's check"
+            : status === "open"
+              ? null
+              : (notes[Math.floor(t / 8) % notes.length] ?? null),
     };
   });
   const blocked = tasks.find((task) => task.status === "blocked");
@@ -176,7 +193,15 @@ export function demoSnapshot(now: number): FloorSnapshot {
     error: null,
     tasks,
     asks: blocked
-      ? [{ workItemId: "wi_demo0001", title: blocked.title, desk: "approve start", reason: "scope: docs/**", approveUrl: null }]
+      ? [
+          {
+            workItemId: "wi_demo0001",
+            title: blocked.title,
+            desk: "approve start",
+            reason: "scope: docs/**",
+            approveUrl: null,
+          },
+        ]
       : [],
   };
 }

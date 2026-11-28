@@ -3,7 +3,6 @@ import type { FloorAvatarRig } from "./rig";
 
 export const KINDS: Record<FloorAvatarId, number>;
 export const FRAGMENT: string;
-export const VERTEX_QUAD: string;
 export const VERTEX_THREE: string;
 
 export type FloorAvatarLayout = {
@@ -15,7 +14,6 @@ export type FloorAvatarLayout = {
   small: number;
 };
 
-export function srgbToLinear(hex: string): [number, number, number];
 export function layout(h: number, dpr: number): FloorAvatarLayout;
 
 export type FloorAvatarUniformInput = {

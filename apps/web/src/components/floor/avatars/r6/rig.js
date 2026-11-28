@@ -50,11 +50,6 @@ const drift = (t, every, seed) => {
     k = smooth((f - i - 0.55) / 0.45);
   return lerp(hash(i * 1.37 + seed), hash((i + 1) * 1.37 + seed), k) * 2 - 1;
 };
-const seat = (k) => {
-  k = clamp(k);
-  const c = 1.9;
-  return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2);
-};
 function visemeOf(word) {
   const w = word.toLowerCase().replace(/[^a-z0-9]/g, "");
   const v = (w.match(/[aeiouy]+/) ?? ["a"])[0];
@@ -272,13 +267,6 @@ function blinkOf(state, t) {
   return [blinkAt(t - tb, w), blinkAt(t - tb - 0.016, w)];
 }
 
-function stateAt(state, t) {
-  if (state !== "cycle") return state;
-  const tt = ((t % CYCLE_LEN) + CYCLE_LEN) % CYCLE_LEN;
-  for (const [name, a, b] of CYCLE) if (tt >= a && tt < b) return name;
-  return "idle";
-}
-
 function rigAt(state, t) {
   const base = state === "blink" ? "idle" : state;
   const tc = state === "cycle" ? ((t % CYCLE_LEN) + CYCLE_LEN) % CYCLE_LEN : t;
@@ -300,4 +288,4 @@ function rigAt(state, t) {
   };
 }
 
-export { rigAt, stateAt, CYCLE_LEN, seat };
+export { rigAt };
