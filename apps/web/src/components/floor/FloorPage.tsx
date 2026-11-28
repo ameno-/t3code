@@ -203,7 +203,9 @@ export function FloorPage() {
       }}
     >
       <style>{FLOOR_CSS}</style>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+      <div
+        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}
+      >
         <h1 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Nasir Floor</h1>
         <NasirCallButton />
       </div>
@@ -334,7 +336,6 @@ const FLOOR_CSS = `
 .nasir-floor-col h2{white-space:nowrap;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.6;margin:8px 0 0;text-align:center;font-weight:600}
 .nasir-floor-badge{white-space:nowrap;position:absolute;top:30px;left:50%;transform:translateX(-50%);background:var(--destructive);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px}
 .nasir-floor-avatar-layer{position:absolute;inset:0;z-index:1;pointer-events:none}
-.nasir-floor-avatar-host{position:absolute;inset:0}
 .nasir-floor-belt{position:absolute;left:0;right:0;top:214px;height:14px;z-index:2;background-color:var(--muted);
  background-image:repeating-linear-gradient(90deg,transparent 0 14px,rgba(0,0,0,.14) 14px 16px);animation:nasir-floor-belt 1.2s linear infinite}
 @keyframes nasir-floor-belt{to{background-position:16px 0}}

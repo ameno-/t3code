@@ -34,11 +34,21 @@ describe("parseFloorAvatarManifest", () => {
       schema: "floor-avatars/1",
       sourceCommit: "abc123",
       license: "Apache-2.0",
-      avatars: [{ id: "nasir", file: "nasir.glb", sha256: sha, bytes: 120_000, heightM: 1.2 }],
+      avatars: [
+        {
+          id: "nasir",
+          file: "nasir.glb",
+          sha256: sha,
+          bytes: 120_000,
+          heightM: 1.2,
+          defaultSkin: null,
+          skins: {},
+        },
+      ],
     });
   });
 
-  it("accepts a later schema with skins, which the renderer does not apply yet", () => {
+  it("reads the r6 default skin and all three skin slots", () => {
     const manifest = parseFloorAvatarManifest({
       schema: "floor-avatars/2",
       avatars: [
@@ -47,12 +57,60 @@ describe("parseFloorAvatarManifest", () => {
           file: "nasir.glb",
           sha256: sha,
           bytes: 1,
-          skins: { default: { skin_base: { color: "#45707e", roughness: 0.8 } } },
+          default_skin: "barn",
+          skins: {
+            barn: {
+              skin_base: { color: "#D4A257", roughness: 0.86 },
+              skin_belly: { color: "#f8f5ec", roughness: 0.92 },
+              skin_mark: { color: "#5a3d22", roughness: 0.78 },
+            },
+            snowy: {
+              skin_base: { color: "#e6e4de" },
+              skin_belly: { color: "#fbfaf6" },
+              skin_mark: { color: "#3a3a3e" },
+            },
+          },
         },
       ],
     });
     expect(manifest?.schema).toBe("floor-avatars/2");
-    expect(manifest?.avatars.map((avatar) => avatar.id)).toEqual(["nasir"]);
+    expect(manifest?.avatars[0]).toMatchObject({
+      id: "nasir",
+      defaultSkin: "barn",
+      skins: {
+        barn: { base: "#d4a257", belly: "#f8f5ec", mark: "#5a3d22" },
+        snowy: { base: "#e6e4de", belly: "#fbfaf6", mark: "#3a3a3e" },
+      },
+    });
+  });
+
+  it("falls back to the first complete skin when default_skin is absent or invalid", () => {
+    const manifest = parseFloorAvatarManifest({
+      schema: "floor-avatars/2",
+      avatars: [
+        {
+          id: "nasir",
+          file: "nasir.glb",
+          sha256: sha,
+          bytes: 1,
+          default_skin: "missing",
+          skins: {
+            barn: {
+              skin_base: { color: "#d4a257" },
+              skin_belly: { color: "#f8f5ec" },
+              skin_mark: { color: "#5a3d22" },
+            },
+            broken: {
+              skin_base: { color: "not-a-colour" },
+              skin_belly: { color: "#fff" },
+              skin_mark: { color: "#000" },
+            },
+          },
+        },
+      ],
+    });
+    expect(manifest?.avatars[0]?.defaultSkin).toBe("barn");
+    expect(Object.keys(manifest?.avatars[0]?.skins ?? {})).toEqual(["barn"]);
   });
 
   it("keeps an empty manifest valid so the placeholder stays", () => {
